@@ -10,9 +10,9 @@
 QCXXHighlighter::QCXXHighlighter(QTextDocument* document) :
     QStyleSyntaxHighlighter(document),
     m_highlightRules     (),
-    m_includePattern     (QRegularExpression(R"(#include\s+([<"][a-zA-Z0-9*._]+[">]))")),
-    m_functionPattern    (QRegularExpression(R"(\b([A-Za-z0-9_]+(?:\s+|::))*([A-Za-z0-9_]+)(?=\())")),
-    m_defTypePattern     (QRegularExpression(R"(\b([A-Za-z0-9_]+)\s+[A-Za-z]{1}[A-Za-z0-9_]+\s*[;=])")),
+    m_includePattern     (QRegularExpression(R"(^\s*#\s*include\s*([<"][^:?"<>\|]+[">]))")),
+    m_functionPattern    (QRegularExpression(R"(\b([_a-zA-Z][_a-zA-Z0-9]*\s+)?((?:[_a-zA-Z][_a-zA-Z0-9]*\s*::\s*)*[_a-zA-Z][_a-zA-Z0-9]*)(?=\s*\())")),
+    m_defTypePattern     (QRegularExpression(R"(\b([_a-zA-Z][_a-zA-Z0-9]*)\s+[_a-zA-Z][_a-zA-Z0-9]*\s*[;=])")),
     m_commentStartPattern(QRegularExpression(R"(/\*)")),
     m_commentEndPattern  (QRegularExpression(R"(\*/)"))
 {
@@ -46,7 +46,7 @@ QCXXHighlighter::QCXXHighlighter(QTextDocument* document) :
 
     // Numbers
     m_highlightRules.append({
-        QRegularExpression(R"(\b(0b|0x){0,1}[\d.']+\b)"),
+        QRegularExpression(R"((?<=\b|\s|^)(?i)(?:(?:(?:(?:(?:\d+(?:'\d+)*)?\.(?:\d+(?:'\d+)*)(?:e[+-]?(?:\d+(?:'\d+)*))?)|(?:(?:\d+(?:'\d+)*)\.(?:e[+-]?(?:\d+(?:'\d+)*))?)|(?:(?:\d+(?:'\d+)*)(?:e[+-]?(?:\d+(?:'\d+)*)))|(?:0x(?:[0-9a-f]+(?:'[0-9a-f]+)*)?\.(?:[0-9a-f]+(?:'[0-9a-f]+)*)(?:p[+-]?(?:\d+(?:'\d+)*)))|(?:0x(?:[0-9a-f]+(?:'[0-9a-f]+)*)\.?(?:p[+-]?(?:\d+(?:'\d+)*))))[lf]?)|(?:(?:(?:[1-9]\d*(?:'\d+)*)|(?:0[0-7]*(?:'[0-7]+)*)|(?:0x[0-9a-f]+(?:'[0-9a-f]+)*)|(?:0b[01]+(?:'[01]+)*))(?:u?l{0,2}|l{0,2}u?)))(?=\b|\s|$))"),
         "Number"
     });
 
@@ -64,7 +64,7 @@ QCXXHighlighter::QCXXHighlighter(QTextDocument* document) :
 
     // Single line
     m_highlightRules.append({
-        QRegularExpression(R"(/[^\n]*)"),
+        QRegularExpression(R"(//[^\n]*)"),
         "Comment"
     });
 }
